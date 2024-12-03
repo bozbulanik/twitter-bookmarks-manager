@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON File Editor</title>
+  <link rel="stylesheet" href="styles2.css">
+  
+</head>
+<body>
+    
+  <h1>Emek's Twitter Bookmarks Manager</h1>
+  <label for="fileInput" class="file-upload">Upload File</label>
+  <input type="file" id="fileInput" accept=".json">
+  <button id="saveButton">Save File</button>
+  <div class="hl"></div>
+
+  <div class="main-div">
+
+    <div class="tree-view-div">
+        <h2>Categories</h2>
+        <div id="treeView"></div>
+    </div>
+    <div class="vl"></div>
+    <div id="content-div">
+      <div class="menu">
+        <select id="keyFilter">
+        <option value="">--Select a Key--</option>
+        <!-- Dropdown options will be populated dynamically -->
+        </select>
+        <input type="text" id="searchInput" placeholder="Search value">
+      </div>
+      
+      <div id="path"></div>
+      <div class="bookmark-list" id="bookmarkList">
+        <div class="bookmark-item-titles">
+          <div class="idElement"><h3>ID</h3></div>
+          <div class="textElement"><h3>Name</h3></div>
+          <div class="tagElement"><h3>Category</h3></div>
+          <div class="delete-button-text"><h3></h3></div>
+
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  <script src="script2.js"></script>
+</body>
+</html>

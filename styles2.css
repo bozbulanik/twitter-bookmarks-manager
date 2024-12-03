@@ -1,0 +1,174 @@
+body {
+    font-family: Inter;
+
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+h1{
+    padding: 16px;
+    margin:0px;
+    color: #222;
+}
+h2{
+    padding: 16px;
+    margin:0px;
+    color: #222;
+
+}
+h3{
+    margin: 0px;
+    color: #222;
+
+}
+.main-div {
+    display: flex;
+}
+.tree-view-div{
+}
+#content-div{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.menu{
+    background-color: #f7f7f7;
+    padding: 8px;
+ }
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+li {
+    cursor: pointer;
+    margin: 8px;
+    margin-left: 20px;
+}
+
+
+.expandable:hover::before {
+    content: "↓ ";
+}
+
+.expanded:hover::before {
+    content: "↑ ";
+}
+button {
+    margin: 10px 0;
+}
+.bookmark-list {
+    margin-top: 20px;
+}
+.bookmark-item-titles {
+    margin-left: 20px;
+    margin-bottom: 10px;
+    display: flex;
+}
+.bookmark-item-titles > * {
+    padding: 16px;
+}
+
+.bookmark-item {
+    margin-left: 20px;
+    display: flex;
+    border-bottom: 1px solid #ccc;
+    
+    align-items: center;
+}
+.bookmark-item:hover{
+    background-color: #eee;
+}
+.bookmark-item > * {
+    padding: 16px;
+}
+
+.idElement {
+    /* Define a specific width if needed */
+}
+
+.textElement {
+    
+}
+
+.tagElement {
+    margin-left: auto; 
+    text-align: end;
+    width: 250px;
+}
+.delete-button-text{
+    text-align: end;
+}
+
+.delete-button{
+    background: url("close.png");
+    background-size: cover;
+    border: 0px;
+    filter: grayscale(100%);
+}
+.delete-button:hover{
+    transform: scale(0.9);
+    border: none;
+}
+.path {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.vl {
+    border-left: 1px solid #ccc;
+    height: 100vh;
+}
+.hl {
+    border-top: 1px solid #ccc;
+    width: 100vw;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.file-upload {
+    margin: 16px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 16px;
+    color: #ccc;
+    font-size: 12px;
+    margin-right: 0px;
+}
+.file-upload:hover{
+    border: 1px solid #555;
+    color: #000;
+}
+
+button {
+    background-color: white;
+    margin: 16px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 16px;
+    color: #ccc;
+    font-size: 12px;
+    margin-right: 0px;
+
+}
+button:hover{
+    border: 1px solid #555;
+    color: #000;
+}
+
+#searchInput,select{
+    background-color: white;
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 16px;
+    color: #555;
+    font-size: 12px;
+}
