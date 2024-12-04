@@ -45,7 +45,15 @@ li {
     margin: 8px;
     margin-left: 20px;
 }
-
+.expandable{
+    text-transform: capitalize;
+}
+.expanded{
+    text-transform: capitalize;
+}
+.leaf{
+    text-transform: capitalize;
+}
 
 .expandable:hover::before {
     content: "↓ ";
@@ -62,7 +70,6 @@ button {
 }
 .bookmark-item-titles {
     margin-left: 20px;
-    margin-bottom: 10px;
     display: flex;
 }
 .bookmark-item-titles > * {
@@ -110,9 +117,9 @@ button {
     transform: scale(0.9);
     border: none;
 }
-.path {
-    font-weight: bold;
-    margin-bottom: 20px;
+#path {
+    padding: 16px;
+    font-style: italic;
 }
 
 .vl {
@@ -171,4 +178,7 @@ button:hover{
     border-radius: 16px;
     color: #555;
     font-size: 12px;
+}
+#category-text:hover{
+    cursor: pointer;
 }

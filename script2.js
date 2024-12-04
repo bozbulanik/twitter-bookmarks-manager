@@ -1,7 +1,21 @@
 let bookmarksData = []; // Array to hold all the bookmark data
 
-let currentPath;
+let currentPath = "";
 
+
+document.getElementById("category-text").addEventListener("click", function (event) {
+    createList("", bookmarksData); 
+    changePathText("");
+});
+
+function changePathText(text){
+    let words = text.split(">");
+    let formattedStr = words.map(word => {
+        return word.trim().replace(/\b\w/g, char => char.toUpperCase());
+      }).join(" > ");
+
+    document.getElementById("path").innerText = formattedStr;
+}
 // Helper function to build the category tree
 function buildCategoryTree(bookmarks) {
     const tree = {};
@@ -54,7 +68,8 @@ function renderTreeView(tree, parentCategories = []) {
         li.addEventListener("click", function (event) {
             event.stopPropagation(); // Prevent expand/collapse behavior
             currentPath = [...parentCategories, category].join(">");
-            createList([...parentCategories, category].join(">"))
+            createList([...parentCategories, category].join(">"), bookmarksData)
+            changePathText(currentPath);
         });
 
         ul.appendChild(li);
@@ -80,15 +95,26 @@ function app(){
     const treeView = renderTreeView(tree);
     document.getElementById("treeView").innerHTML = ""; // Clear previous tree
     document.getElementById("treeView").appendChild(treeView);
-    createList("");
+    createList("", bookmarksData);
+    changePathText(currentPath);
 
 }
+document.getElementById("searchInput").addEventListener("input", () => {
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
 
-function createList(path){
+    const filteredData = bookmarksData.filter(item => {
+        if (searchValue) {
+            return item.full_text && item.full_text.toString().toLowerCase().includes(searchValue);
+        }
+        return true;
+    });
+    createList("", filteredData);
+});
+function createList(path, data){
 
     const bookmarkList = document.getElementById("bookmarkList");
     bookmarkList.innerHTML = "";
-    bookmarksData.forEach((item, index) => {
+    data.forEach((item, index) => {
         if(item.tags.includes(path)){
             const bookmarkElement = document.createElement("div");
             bookmarkElement.className = "bookmark-item";
@@ -126,7 +152,7 @@ function createList(path){
 
 function deleteKeyValue(index) {
     bookmarksData.splice(index, 1);
-    createList(currentPath);
+    createList(currentPath, bookmarksData);
 }
 
 // Handle file input and display the tree view
