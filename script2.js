@@ -1,34 +1,34 @@
-let bookmarksData = []; // Array to hold all the bookmark data
-
+let bookmarksData = [];
 let currentPath = "";
 
+let renderTimeout;
 
 document.getElementById("category-text").addEventListener("click", function (event) {
     createList("", bookmarksData); 
-    changePathText("");
+    changePathText("", false);
 });
 
-function changePathText(text){
-    let words = text.split(">");
-    let formattedStr = words.map(word => {
-        return word.trim().replace(/\b\w/g, char => char.toUpperCase());
-      }).join(" > ");
-
-    document.getElementById("path").innerText = formattedStr;
+function changePathText(text, forSearch){
+    const pathDiv = document.getElementById("path");
+    if (forSearch) {
+        pathDiv.innerText = text;
+    } else {
+        let words = text.split(">");
+        let formattedStr = words.map(word => {
+            return word.trim().replace(/\b\w/g, char => char.toUpperCase());
+        }).join(" > ");
+        pathDiv.innerText = formattedStr;
+    }
 }
-// Helper function to build the category tree
+
 function buildCategoryTree(bookmarks) {
     const tree = {};
-
     bookmarks.forEach((bookmark) => {
         const categories = bookmark.tags.split("+");
-
         categories.forEach((categoryString) => {
             let categoriesList = categoryString.split(">");
             let currentNode = tree;
-
             categoriesList.forEach((cat) => {
-                // If category doesn't exist, create it
                 if (!currentNode[cat]) {
                     currentNode[cat] = {};
                 }
@@ -36,86 +36,87 @@ function buildCategoryTree(bookmarks) {
             });
         });
     });
-
     return tree;
 }
 
-// Function to recursively render the tree view as HTML with expand/collapse
 function renderTreeView(tree, parentCategories = []) {
     const ul = document.createElement("ul");
     for (const category in tree) {
         const li = document.createElement("li");
         const childTree = renderTreeView(tree[category], [...parentCategories, category]);
-
         li.textContent = category;
+        li.classList.add(Object.keys(tree[category]).length === 0 ? "leaf" : "expandable");
 
-        // Check if the current node is a leaf (deepest node)
-        if (Object.keys(tree[category]).length === 0) {
-            li.classList.add("leaf");
-        } else {
-            li.classList.add("expandable");
+        li.addEventListener("click", function (event) {
+            event.stopPropagation();
+            currentPath = [...parentCategories, category].join(">");
+            createList(currentPath, bookmarksData);
+            changePathText(currentPath, false);
+        });
 
+        if (Object.keys(tree[category]).length > 0) {
             li.addEventListener("click", function (event) {
                 event.stopPropagation();
                 toggleCollapse(li, childTree);
             });
-
             childTree.style.display = "none";
             li.appendChild(childTree);
         }
-
-        // Add event listener to show current category and its parents
-        li.addEventListener("click", function (event) {
-            event.stopPropagation(); // Prevent expand/collapse behavior
-            currentPath = [...parentCategories, category].join(">");
-            createList([...parentCategories, category].join(">"), bookmarksData)
-            changePathText(currentPath);
-        });
-
         ul.appendChild(li);
     }
     return ul;
 }
 
-// Toggle the collapse/expand of a category
 function toggleCollapse(li, childTree) {
     const isExpanded = li.classList.contains("expanded");
-    if (isExpanded) {
-        li.classList.remove("expanded");
-        childTree.style.display = "none";
-    } else {
-        li.classList.add("expanded");
-        childTree.style.display = "block";
-    }
+    li.classList.toggle("expanded", !isExpanded);
+    childTree.style.display = isExpanded ? "none" : "block";
 }
 
-
-function app(){
+// Main application setup function
+function app() {
     const tree = buildCategoryTree(bookmarksData);
     const treeView = renderTreeView(tree);
-    document.getElementById("treeView").innerHTML = ""; // Clear previous tree
+    document.getElementById("treeView").innerHTML = "";
     document.getElementById("treeView").appendChild(treeView);
     createList("", bookmarksData);
-    changePathText(currentPath);
-
+    changePathText(currentPath, false);
 }
+
+let searchTimeout; // To hold the debounce timer
+
 document.getElementById("searchInput").addEventListener("input", () => {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    if (searchValue) {
+        // Update the path text for searching
+        let pathText = "Searching for " + searchValue + "...";
+        changePathText(pathText, true);
 
-    const filteredData = bookmarksData.filter(item => {
-        if (searchValue) {
-            return item.full_text && item.full_text.toString().toLowerCase().includes(searchValue);
-        }
-        return true;
-    });
-    createList("", filteredData);
+        // Clear the previous timeout if user types before debounce time is over
+        clearTimeout(searchTimeout);
+
+        // Set a new timeout to wait for the user to stop typing
+        searchTimeout = setTimeout(() => {
+            // Filter data efficiently and update the list
+            const filteredData = bookmarksData.filter(item => {
+                return item.full_text && item.full_text.toLowerCase().includes(searchValue);
+            });
+            createList(currentPath, filteredData);
+        }, 300); // Adjust the delay (300ms in this case)
+    } else {
+        // When no search input, show the full list and reset the path
+        changePathText(currentPath, false);
+        createList(currentPath, bookmarksData);
+    }
 });
-function createList(path, data){
 
+function createList(path, data) {
     const bookmarkList = document.getElementById("bookmarkList");
-    bookmarkList.innerHTML = "";
+    const fragment = document.createDocumentFragment(); // Use fragment to reduce reflows
+    bookmarkList.innerHTML = ""; // Clear previous list
+
     data.forEach((item, index) => {
-        if(item.tags.includes(path)){
+        if (item.tags.includes(path)) {
             const bookmarkElement = document.createElement("div");
             bookmarkElement.className = "bookmark-item";
 
@@ -128,7 +129,6 @@ function createList(path, data){
             textElement.innerHTML = item.full_text;
             textElement.href = item.tweet_url;
             tagElement.innerHTML = item.tags;
-        
 
             idElement.className = "idElement";
             textElement.className = "textElement";
@@ -136,18 +136,17 @@ function createList(path, data){
             deleteButton.className = "delete-button"; 
             deleteButton.addEventListener("click", () => {
                 deleteKeyValue(index);
-            });  
-
+            });
 
             bookmarkElement.appendChild(idElement);
             bookmarkElement.appendChild(textElement);
             bookmarkElement.appendChild(tagElement);
             bookmarkElement.appendChild(deleteButton);
-
-
-            bookmarkList.appendChild(bookmarkElement);
+            fragment.appendChild(bookmarkElement);
         }
     });
+
+    bookmarkList.appendChild(fragment); // Append the fragment to minimize reflows
 }
 
 function deleteKeyValue(index) {
@@ -175,10 +174,10 @@ async function loadFileFromDisk() {
         
         const data = await response.json();
         bookmarksData = data;
-        app(); // Call your app function
+        app();
     } catch (error) {
         console.error("Error loading file:", error);
     }
 }
 
-loadFileFromDisk(); // Automatically triggers on page load
+loadFileFromDisk();
