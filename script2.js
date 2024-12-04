@@ -21,6 +21,14 @@ function changePathText(text, forSearch){
     }
 }
 
+function changeTagText(text){
+    let words = text.split(">");
+    let formattedStr = words.map(word => {
+        return word.trim().replace(/\b\w/g, char => char.toUpperCase());
+    }).join(" > ");
+    return formattedStr;
+}
+
 function buildCategoryTree(bookmarks) {
     const tree = {};
     bookmarks.forEach((bookmark) => {
@@ -128,7 +136,7 @@ function createList(path, data) {
             idElement.innerHTML = item.id;
             textElement.innerHTML = item.full_text;
             textElement.href = item.tweet_url;
-            tagElement.innerHTML = item.tags;
+            tagElement.innerHTML = changeTagText(item.tags);
 
             idElement.className = "idElement";
             textElement.className = "textElement";
@@ -181,3 +189,58 @@ async function loadFileFromDisk() {
 }
 
 loadFileFromDisk();
+
+function addBookmark(name, url, tags) {
+    const newId = bookmarksData.reduce((max, item) => Math.max(max, item.id), 0) + 1;
+    
+    const tweetedAt = new Date().toISOString();
+
+    const newBookmark = {
+        "id": newId,
+        "full_text": name,
+        "tweet_url": url,
+        "tweeted_at": tweetedAt,
+        "tags": tags
+    };
+
+    bookmarksData.push(newBookmark);
+}
+
+
+// Get modal and button elements
+const addBMModal = document.getElementById("addBMModal");
+const openAddBMModalBtn = document.getElementById("openAddBMModalBtn");
+const closeAddBMModalBtn = document.getElementById("closeAddBMModalBtn");
+
+// Open modal when button is clicked
+openAddBMModalBtn.onclick = function() {
+    addBMModal.style.display = "block";
+}
+
+// Close modal when "x" is clicked
+closeAddBMModalBtn.onclick = function() {
+    addBMModal.style.display = "none";
+}
+
+// Close modal if the user clicks outside of the modal content
+window.onclick = function(event) {
+    if (event.target == addBMModal) {
+        addBMModal.style.display = "none";
+    }
+}
+
+
+
+const addBMForm = document.getElementById('addBMForm');
+addBMForm.onsubmit = function(event) {
+    event.preventDefault();
+    const name = document.getElementById('addBMName').value;
+    const url = document.getElementById('addBMURL').value;
+    // const category = document.getElementById('addBookmarkCategory').value;
+
+    const status = document.getElementById("addBMStatus");
+    status.innerText = "Bookmark added with the name " + name + "!";
+
+    addBookmark(name, url, "tags");
+    createList(currentPath, bookmarksData);
+}

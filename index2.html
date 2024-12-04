@@ -5,10 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JSON File Editor</title>
   <link rel="stylesheet" href="styles2.css">
-  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Parkinsans:wght@300..800&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    
+  <!-- Modal -->
+  <div id="addBMModal" class="modal">
+    <div class="modal-content">
+      <span id="closeAddBMModalBtn" class="close">&times;</span>
+      <h2>Add Bookmark</h2>
+  
+      <form id="addBMForm">
+          <p>Name</p>
+          <input type="text" id="addBMName" name="name" placeholder="Name" required>
+  
+          <p>URL</p>
+          <input type="text" id="addBMURL" name="url" placeholder="URL" required>
+  
+          <p>Category</p>
+          <!-- <select id="addBookmarkCategory" name="category" required>
+              <option value="">Select Category</option>
+          </select> -->
+  
+          <button type="submit" id="addBookmark">Add</button>
+          <p id="addBMStatus"></p>
+      </form>
+  </div>
+  </div>
   <h1>Emek's Twitter Bookmarks Manager</h1>
   <label for="fileInput" class="file-upload">Upload File</label>
   <input type="file" id="fileInput" accept=".json">
@@ -24,7 +48,8 @@
     <div class="vl"></div>
     <div id="content-div">
       <div class="menu">
-        <input type="text" id="searchInput" placeholder="Search value">
+        <input type="text" id="searchInput" placeholder="Search">
+        <button id="openAddBMModalBtn">Add Bookmark</button>
       </div>
       
       <div id="path"></div>
